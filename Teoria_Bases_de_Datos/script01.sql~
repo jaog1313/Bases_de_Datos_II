@@ -1,0 +1,5 @@
+SET SERVEROUTPUT ON
+declare
+	
+begin
+end;
