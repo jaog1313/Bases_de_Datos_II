@@ -1,0 +1,53 @@
+DROP TABLE libro;
+CREATE TABLE libro(
+	codigo number NOT NULL,
+	titulo varchar2(100) NOT NULL,
+	autor varchar2(50) NOT NULL,
+	editorial varchar2(50),
+	precio number,
+	constraint pk_libro primary key(codigo)
+	);
+INSERT INTO libro VALUES (10, 'El Señor de los Anillos: La comunidad del anillo', 'J.R.R. Tolkien', 'Planeta', 40000);
+INSERT INTO libro VALUES (20, 'Harry Potter y el prisionero de Azkaban', 'J.K. Rowling', 'Salamandra', 30000);
+INSERT INTO libro VALUES (30, 'El principito', 'Antoine de Saint Exupéry', 'Panamericana', 20000);
+INSERT INTO libro VALUES (40, 'Tom Sawyer', 'Mark Twain', 'Nuevo siglo', 15000);
+INSERT INTO libro VALUES (50, 'Dracula', 'Bram Stoker', 'Austral', 25000);
+INSERT INTO libro VALUES (60, 'Inteligencia Artificial', 'Russel', 'Pearson', 90000);
+INSERT INTO libro VALUES (70, 'Cien años de Soledad', 'Gabriel García Márquez', 'Planeta', 24000);
+INSERT INTO libro VALUES (80, 'Java en 10 minutos', 'Mario Molina', 'Siglo XXI', 45000);
+INSERT INTO libro VALUES (90, 'Romeo y Julieta', 'William Shakespeare', 'Panamericana', 34000);
+INSERT INTO libro VALUES (11, 'La metamorfosis', 'Frankz Kafka', 'Panamericana', 35000);
+
+
+-- Procedimiento 01
+-- Se imprimen todos los datos de un libro 
+CREATE OR REPLACE PROCEDURE IMPRIMIR_LIBRO(
+    prm_cod_libro NUMBER
+)
+IS
+	r_libro libro%ROWTYPE;
+BEGIN
+	--Obtener el libro de acuerdo con codigo proporcionado
+	SELECT *
+	INTO r_libro
+	FROM libro
+	where libro.codigo = prm_cod_libro;
+	
+	-- Imprimir toda la info del libro
+	DBMS_OUTPUT.PUT_LINE('Código : ' || r_libro.codigo);
+	DBMS_OUTPUT.PUT_LINE('Titulo : ' || r_libro.titulo);
+	DBMS_OUTPUT.PUT_LINE('Autor : ' || r_libro.autor);
+	DBMS_OUTPUT.PUT_LINE('Editorial : ' || r_libro.editorial);
+	DBMS_OUTPUT.PUT_LINE('Precio : ' || r_libro.precio);
+
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE('No exite este libro con el código : ' || prm_cod_libro);
+END;
+
+-- Ejemplos de llamado al procedimiento IMPRIMIR_LIBRO
+-- Primero buscamos un libro con código aceptable
+EXECUTE IMPRIMIR_LIBRO(20);
+
+-- Buscamos un código que no existe
+EXECUTE IMPRIMIR_LIBRO(21);
