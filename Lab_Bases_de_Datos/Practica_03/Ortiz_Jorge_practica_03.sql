@@ -59,7 +59,6 @@ CREATE OR REPLACE PROCEDURE aplicar_descuento(
 )
 
 IS
-	r_libro libro%ROWTYPE;
 	
 BEGIN
 	--Obtener el libro de acuerdo con la editorial
@@ -71,6 +70,9 @@ BEGIN
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('ERROR: El descuento debe ser un número entre 1 y 100');
 	END IF;
+EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
 /
 -- Ejecucion del procedimiento 02
@@ -80,6 +82,10 @@ EXECUTE aplicar_descuento('Planeta', 10);
 -- 	y no modificó los demás.
 select *
 from libro
+
+-- Procedimiento 03
+CREATE OR REPLACE PROCEDURE INCREMENTAR()
+IS
 
 
 
