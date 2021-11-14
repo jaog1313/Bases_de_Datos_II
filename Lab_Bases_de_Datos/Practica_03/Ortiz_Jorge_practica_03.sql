@@ -52,6 +52,8 @@ EXECUTE IMPRIMIR_LIBRO(20);
 -- Buscamos un código que no existe
 EXECUTE IMPRIMIR_LIBRO(21);
 
+
+
 -- Procedimiento 02
 CREATE OR REPLACE PROCEDURE aplicar_descuento(
 	prm_editorial libro.editorial%TYPE,
@@ -59,24 +61,35 @@ CREATE OR REPLACE PROCEDURE aplicar_descuento(
 )
 
 IS
-	
+	mal_descuento EXCEPTION;
 BEGIN
 	--Obtener el libro de acuerdo con la editorial
-	IF prm_descuento <> 0 and prm_descuento <= 100
-	THEN
+	IF prm_descuento < 0 or prm_descuento > 100 THEN
+		RAISE mal_descuento;
+	ELSE
 		UPDATE libro
 		SET libro.precio = libro.precio * (1 - prm_descuento/100)
 		where libro.editorial = prm_editorial;
-	ELSE
-		DBMS_OUTPUT.PUT_LINE('ERROR: El descuento debe ser un número entre 1 y 100');
+		
 	END IF;
 EXCEPTION
-   WHEN OTHERS THEN
-      DBMS_OUTPUT.PUT_LINE( SQLERRM );
+	WHEN mal_descuento THEN
+		DBMS_OUTPUT.PUT_LINE('ERROR: El descuento debe ser un número entre 1 y 100');
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
 /
--- Ejecucion del procedimiento 02
+-- Ejecucion del procedimiento 02 con parámetros válidos
 EXECUTE aplicar_descuento('Planeta', 10);
+
+-- ejecución del procedimiento 02 con un parámetro inválido
+EXECUTE aplicar_descuento('Fondo Económico de Cultura', 20);
+
+-- ejecución del procedimiento 02 con el descuento inválido
+EXECUTE aplicar_descuento('Planeta', -10);
+
+-- ejecución del procedimiento 02 con el descuento inválido
+EXECUTE aplicar_descuento('Planeta', 200);
 
 -- Comprobando que el procedimiento 02 funciona. Modifico los precios de la editorial dada
 -- 	y no modificó los demás.
@@ -87,6 +100,14 @@ from libro
 CREATE OR REPLACE PROCEDURE INCREMENTAR()
 IS
 
+BEGIN
 
+EXCEPTION
 
+END;
+/
 
+EXECUTE INCREMENTAR();
+
+select *
+from libro
