@@ -60,7 +60,6 @@ CREATE OR REPLACE PROCEDURE aplicar_descuento(
 	prm_editorial libro.editorial%TYPE,
 	prm_descuento POSITIVE
 )
-
 IS
 	mal_descuento EXCEPTION;
 BEGIN
@@ -143,14 +142,39 @@ EXCEPTION
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
 /
-/*
-for C2 in cursor_sal loop
-	update emp
-			set name = case
-						 when something     then 'George'
-						 when somethingelse then 'something2'
-						 else 'somthing 3'
-					   end
-			where current of C2
-end loop;
-*/
+
+-- Procedimiento 05
+
+CREATE OR REPLACE PROCEDURE INSERTAR_LIBRO(
+	prm_titulo libro.titulo%TYPE,
+	prm_autor libro.autor%TYPE,
+	prm_editorial libro.editorial%TYPE,
+	prm_precio libro.precio%TYPE
+)
+AS
+	nuevo_codigo libro.codigo%TYPE;
+	v_cond BOOLEAN := TRUE;
+	WHILE v_cond
+	LOOP
+		-- Genero un número aleatorio entre 1 y el máximo número que se puede representar con NUMBER
+		nuevo_codigo := dbms_random.value(1,99999999999999999999999999999999999999); 
+		IF NOT EXISTS (SELECT * FROM libro WHERE libro.codigo = nuevo_codigo) THEN
+			v_cond := FALSE;
+		END IF;
+	END LOOP;
+BEGIN
+	
+	
+	INSERT INTO libro(codigo, titulo, autor, editorial, precio) VALUES(nuevo_codigo, prm_titulo, prm_autor, prm_editorial, prm_precio);
+
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
+ENd;
+/
+
+EXECUTE INSERTAR_LIBRO('Odio, amistad, noviazgo, matrimonio', 'Alice Munro', 'RBA Libros', 50000);
+
+select *
+from libro;
+
