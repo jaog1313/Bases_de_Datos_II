@@ -1,4 +1,5 @@
 DROP TABLE libro;
+
 CREATE TABLE libro(
 	codigo number NOT NULL,
 	titulo varchar2(100) NOT NULL,
@@ -121,3 +122,37 @@ select *
 from libro;
 
 -- Procedimiento 04
+SET VERIFY OFF --Para evitar que el sistema nos muestre el valor que tenía la variable antes.
+DECLARE
+	v_precio NUMBER = 0;
+BEGIN
+	UPDATE libro
+	IF libro.precio < 20000
+	THEN
+		v_precio = libro.precio * 1.1
+	ELSIF libro.precio > 30000
+	THEN
+		v_precio = libro.precio * 1.01
+	ELSE
+		v_precio = libro.precio * 1.05
+	END IF;
+	SET libro.precio = v_precio;
+	WHERE libro.codigo = &v_codigo;
+EXCEPTION
+	WHEN NO_DATA_FOUND THEN
+		DBMS_OUTPUT.PUT_LINE('El libro con el codigo ' || v_codigo || ' no existe.');
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
+END;
+
+/*
+for C2 in cursor_sal loop
+	update emp
+			set name = case
+						 when something     then 'George'
+						 when somethingelse then 'something2'
+						 else 'somthing 3'
+					   end
+			where current of C2
+end loop;
+*/
