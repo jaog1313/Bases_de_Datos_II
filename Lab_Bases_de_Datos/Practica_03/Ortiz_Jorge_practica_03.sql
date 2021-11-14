@@ -122,22 +122,24 @@ select *
 from libro;
 
 -- Procedimiento 04
-SET VERIFY OFF --Para evitar que el sistema nos muestre el valor que tenía la variable antes.
+-- SET VERIFY OFF --Para evitar que el sistema nos muestre el valor que tenía la variable antes.
 DECLARE
-	v_precio NUMBER = 0;
+	CURSOR 	c_libro
+	IS
+		SELECT libro.precio
+		FROM libro
+		WHERE libro.codigo = &v_codigo;
 BEGIN
-	UPDATE libro
-	IF libro.precio < 20000
-	THEN
-		v_precio = libro.precio * 1.1
-	ELSIF libro.precio > 30000
-	THEN
-		v_precio = libro.precio * 1.01
-	ELSE
-		v_precio = libro.precio * 1.05
-	END IF;
-	SET libro.precio = v_precio;
-	WHERE libro.codigo = &v_codigo;
+	FOR r_libro IN c_libro
+	LOOP
+		UPDATE libro
+		SET precio = case
+			WHEN precio < 20000 THEN precio * 1.1
+			WHEN precio > 30000 THEN precio * 1.01
+			ELSE precio * 1.05
+			END
+		WHERE CURRENT OF r_libro;
+	END LOOP;
 EXCEPTION
 	WHEN NO_DATA_FOUND THEN
 		DBMS_OUTPUT.PUT_LINE('El libro con el codigo ' || v_codigo || ' no existe.');
