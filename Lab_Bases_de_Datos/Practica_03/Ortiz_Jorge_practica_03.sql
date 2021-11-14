@@ -75,6 +75,8 @@ BEGIN
 EXCEPTION
 	WHEN mal_descuento THEN
 		DBMS_OUTPUT.PUT_LINE('ERROR: El descuento debe ser un número entre 1 y 100');
+	WHEN NO_DATA_FOUND THEN
+		DBMS_OUTPUT.PUT_LINE('La editorial no existe');
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
@@ -117,3 +119,5 @@ EXECUTE INCREMENTAR();
 
 select *
 from libro;
+
+-- Procedimiento 04
