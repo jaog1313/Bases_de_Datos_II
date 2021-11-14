@@ -64,7 +64,7 @@ IS
 	mal_descuento EXCEPTION;
 BEGIN
 	--Obtener el libro de acuerdo con la editorial
-	IF prm_descuento < 0 or prm_descuento > 100 THEN
+	IF prm_descuento < 1 or prm_descuento > 100 THEN
 		RAISE mal_descuento;
 	ELSE
 		UPDATE libro
@@ -87,6 +87,9 @@ EXECUTE aplicar_descuento('Fondo Económico de Cultura', 20);
 
 -- ejecución del procedimiento 02 con el descuento inválido
 EXECUTE aplicar_descuento('Planeta', -10);
+
+-- ejecución del procedimiento 02 con el descuento inválido
+EXECUTE aplicar_descuento('Planeta', 0);
 
 -- ejecución del procedimiento 02 con el descuento inválido
 EXECUTE aplicar_descuento('Planeta', 200);
