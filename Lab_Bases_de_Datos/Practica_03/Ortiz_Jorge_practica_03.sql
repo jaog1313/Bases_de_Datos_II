@@ -1,5 +1,5 @@
 DROP TABLE libro;
-
+/
 CREATE TABLE libro(
 	codigo number NOT NULL,
 	titulo varchar2(100) NOT NULL,
@@ -123,30 +123,26 @@ from libro;
 
 -- Procedimiento 04
 -- SET VERIFY OFF --Para evitar que el sistema nos muestre el valor que tenía la variable antes.
+-- ACCEPT v_codigo libro.codigo%TYPE PROMPT 'Introduzca el codigo del libro '
+
 DECLARE
-	CURSOR 	c_libro
-	IS
-		SELECT libro.precio
-		FROM libro
-		WHERE libro.codigo = &v_codigo;
+	v_codigo libro.codigo%TYPE;
 BEGIN
-	FOR r_libro IN c_libro
-	LOOP
-		UPDATE libro
+	
+	UPDATE libro
 		SET precio = case
 			WHEN precio < 20000 THEN precio * 1.1
 			WHEN precio > 30000 THEN precio * 1.01
 			ELSE precio * 1.05
 			END
-		WHERE CURRENT OF r_libro;
-	END LOOP;
+		WHERE libro.codigo='&v_codigo';
 EXCEPTION
 	WHEN NO_DATA_FOUND THEN
 		DBMS_OUTPUT.PUT_LINE('El libro con el codigo ' || v_codigo || ' no existe.');
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
-
+/
 /*
 for C2 in cursor_sal loop
 	update emp
