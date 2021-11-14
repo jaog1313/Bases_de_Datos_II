@@ -44,10 +44,43 @@ EXCEPTION
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE('No exite este libro con el código : ' || prm_cod_libro);
 END;
-
+/
 -- Ejemplos de llamado al procedimiento IMPRIMIR_LIBRO
 -- Primero buscamos un libro con código aceptable
 EXECUTE IMPRIMIR_LIBRO(20);
 
 -- Buscamos un código que no existe
 EXECUTE IMPRIMIR_LIBRO(21);
+
+-- Procedimiento 02
+CREATE OR REPLACE PROCEDURE aplicar_descuento(
+	prm_editorial libro.editorial%TYPE,
+	prm_descuento POSITIVE
+)
+
+IS
+	r_libro libro%ROWTYPE;
+	
+BEGIN
+	--Obtener el libro de acuerdo con la editorial
+	IF prm_descuento <> 0 and prm_descuento <= 100
+	THEN
+		UPDATE libro
+		SET libro.precio = libro.precio * (1 - prm_descuento/100)
+		where libro.editorial = prm_editorial;
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('ERROR: El descuento debe ser un número entre 1 y 100');
+	END IF;
+END;
+/
+-- Ejecucion del procedimiento 02
+EXECUTE aplicar_descuento('Planeta', 10);
+
+-- Comprobando que el procedimiento 02 funciona. Modifico los precios de la editorial dada
+-- 	y no modificó los demás.
+select *
+from libro
+
+
+
+
