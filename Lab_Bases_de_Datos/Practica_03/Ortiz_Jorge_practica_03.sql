@@ -154,23 +154,26 @@ CREATE OR REPLACE PROCEDURE INSERTAR_LIBRO(
 AS
 	nuevo_codigo libro.codigo%TYPE;
 	v_cond BOOLEAN := TRUE;
+	numero_filas NUMBER := 0;
+BEGIN
 	WHILE v_cond
 	LOOP
+	
 		-- Genero un número aleatorio entre 1 y el máximo número que se puede representar con NUMBER
-		nuevo_codigo := dbms_random.value(1,99999999999999999999999999999999999999); 
-		IF NOT EXISTS (SELECT * FROM libro WHERE libro.codigo = nuevo_codigo) THEN
+		nuevo_codigo := dbms_random.value(1,99999999999999999999999999999999999999);
+		COUNT(*) INTO numero_filas FROM libro WHERE libro.codigo = nuevo_codigo;
+		IF n = 1 THEN
 			v_cond := FALSE;
 		END IF;
-	END LOOP;
-BEGIN
 	
+	END LOOP;	
 	
 	INSERT INTO libro(codigo, titulo, autor, editorial, precio) VALUES(nuevo_codigo, prm_titulo, prm_autor, prm_editorial, prm_precio);
 
 EXCEPTION
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
-ENd;
+END;
 /
 
 EXECUTE INSERTAR_LIBRO('Odio, amistad, noviazgo, matrimonio', 'Alice Munro', 'RBA Libros', 50000);
