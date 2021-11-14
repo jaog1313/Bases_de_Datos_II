@@ -69,7 +69,7 @@ BEGIN
 	ELSE
 		UPDATE libro
 		SET libro.precio = libro.precio * (1 - prm_descuento/100)
-		where libro.editorial = prm_editorial;
+		WHERE libro.editorial = prm_editorial;
 		
 	END IF;
 EXCEPTION
@@ -97,20 +97,23 @@ EXECUTE aplicar_descuento('Planeta', 200);
 -- Comprobando que el procedimiento 02 funciona. Modifico los precios de la editorial dada
 -- 	y no modificó los demás.
 select *
-from libro
+from libro;
 
 -- Procedimiento 03
-CREATE OR REPLACE PROCEDURE INCREMENTAR()
+CREATE OR REPLACE PROCEDURE INCREMENTAR
 IS
 
 BEGIN
-
+	UPDATE libro
+	SET libro.precio = libro.precio * 0.9
+	WHERE libro.precio <= 30000 and libro.precio >= 20000;
 EXCEPTION
-
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
 /
 
 EXECUTE INCREMENTAR();
 
 select *
-from libro
+from libro;
