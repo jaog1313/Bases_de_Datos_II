@@ -23,7 +23,7 @@ INSERT INTO libro VALUES (11, 'La metamorfosis', 'Frankz Kafka', 'Panamericana',
 -- Procedimiento 01
 -- Se imprimen todos los datos de un libro 
 CREATE OR REPLACE PROCEDURE IMPRIMIR_LIBRO(
-    prm_cod_libro NUMBER
+	prm_cod_libro NUMBER
 )
 IS
 	r_libro libro%ROWTYPE;
@@ -98,8 +98,8 @@ EXECUTE aplicar_descuento('Planeta', 200);
 
 -- Comprobando que el procedimiento 02 funciona. Modifico los precios de la editorial dada
 -- 	y no modificó los demás.
-select *
-from libro;
+SELECT *
+FROM libro;
 
 -- Procedimiento 03
 CREATE OR REPLACE PROCEDURE INCREMENTAR
@@ -108,7 +108,7 @@ IS
 BEGIN
 	UPDATE libro
 	SET libro.precio = libro.precio * 0.9
-	WHERE libro.precio <= 30000 and libro.precio >= 20000;
+	WHERE libro.precio <= 30000 AND libro.precio >= 20000;
 EXCEPTION
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
@@ -117,8 +117,8 @@ END;
 
 EXECUTE INCREMENTAR();
 
-select *
-from libro;
+SELECT *
+FROM libro;
 
 -- Procedimiento 04
 -- SET VERIFY OFF --Para evitar que el sistema nos muestre el valor que tenía la variable antes.
@@ -151,33 +151,54 @@ CREATE OR REPLACE PROCEDURE INSERTAR_LIBRO(
 	prm_editorial libro.editorial%TYPE,
 	prm_precio libro.precio%TYPE
 )
-AS
+IS
+	v_cont INTEGER := 0;
 	nuevo_codigo libro.codigo%TYPE;
-	v_cond BOOLEAN := TRUE;
-	numero_filas NUMBER := 0;
+	r_libro libro%rowtype;
+	v_cont2 INTEGER := 0;
 BEGIN
-	WHILE v_cond
-	LOOP
+	SELECT MAX(codigo)
+	INTO nuevo_codigo
+	FROM libro;
+	-- DBMS_OUTPUT.PUT_LINE(nuevo_codigo);
+	nuevo_codigo := nuevo_codigo + 1;
 	
-		-- Genero un número aleatorio entre 1 y el máximo número que se puede representar con NUMBER
-		nuevo_codigo := dbms_random.value(1,99999999999999999999999999999999999999);
-		COUNT(*) INTO numero_filas FROM libro WHERE libro.codigo = nuevo_codigo;
-		IF n = 1 THEN
-			v_cond := FALSE;
+	SELECT COUNT(*)
+	INTO v_cont
+	FROM libro
+	WHERE (titulo LIKE ( prm_titulo)) AND (autor LIKE(prm_autor)) AND (editorial LIKE(prm_editorial));
+	
+	SELECT COUNT(*)
+	INTO v_cont2
+	FROM libro
+	WHERE codigo = nuevo_codigo;
+	IF v_cont = 0 THEN
+		
+		IF v_cont2 = 0 THEN
+			-- DBMS_OUTPUT.PUT_LINE(nuevo_codigo);
+			INSERT INTO libro(codigo, titulo, autor, editorial, precio) VALUES(nuevo_codigo, prm_titulo, prm_autor, prm_editorial, prm_precio);
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('Error, código duplicado. No fue posible agregar el libro, intente ingresar nuevamente el libro con un nuevo codigo');
 		END IF;
-	
-	END LOOP;	
-	
-	INSERT INTO libro(codigo, titulo, autor, editorial, precio) VALUES(nuevo_codigo, prm_titulo, prm_autor, prm_editorial, prm_precio);
-
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('Error, el libro ya está registrado');
+	END IF;
 EXCEPTION
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
+
 END;
 /
 
 EXECUTE INSERTAR_LIBRO('Odio, amistad, noviazgo, matrimonio', 'Alice Munro', 'RBA Libros', 50000);
 
 select *
+from libro;
+
+-- Intentamos añadir el mismo libro, solo que cambiando algunas minúsculas por mayúsculas y viceversa
+-- No debería dejarlo ingresar
+EXECUTE INSERTAR_LIBRO('Odio, Amistad, Noviazgo, Matrimonio', 'Alice Munro', 'rba Libros', 50000);
+
+SELECT *
 from libro;
 
