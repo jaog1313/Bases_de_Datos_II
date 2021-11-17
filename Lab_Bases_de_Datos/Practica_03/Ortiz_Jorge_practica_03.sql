@@ -125,7 +125,8 @@ FROM libro;
 -- ACCEPT v_codigo libro.codigo%TYPE PROMPT 'Introduzca el codigo del libro '
 
 DECLARE
-	v_codigo libro.codigo%TYPE;
+	--v_codigo libro.codigo%TYPE;
+	v_codigo libro.codigo%TYPE := 11;
 BEGIN
 	
 	UPDATE libro
@@ -134,7 +135,8 @@ BEGIN
 			WHEN precio > 30000 THEN precio * 1.01
 			ELSE precio * 1.05
 			END
-		WHERE libro.codigo='&v_codigo';
+		--WHERE libro.codigo='&v_codigo';
+		WHERE libro.codigo=v_codigo;
 EXCEPTION
 	WHEN NO_DATA_FOUND THEN
 		DBMS_OUTPUT.PUT_LINE('El libro con el codigo ' || v_codigo || ' no existe.');
@@ -144,7 +146,10 @@ END;
 /
 
 -- Procedimiento 05
-
+/*
+No deja ingresar un libro si tiene el mismo titulo, el mismo autor y la misma editorial; 
+incluso si se han cambiado de minúsculas a mayúsculas, o viceversa, algunas letras
+*/
 CREATE OR REPLACE PROCEDURE INSERTAR_LIBRO(
 	prm_titulo libro.titulo%TYPE,
 	prm_autor libro.autor%TYPE,
