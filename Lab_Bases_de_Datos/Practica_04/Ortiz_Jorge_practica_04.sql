@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION get_deptid_by_name(
 )
 RETURN NUMBER
 IS
-	v_deptid := 0;
+	v_deptid NUMBER := 0;
 BEGIN
 	SELECT dept.deptno
 	INTO v_deptid
@@ -22,11 +22,40 @@ EXCEPTION
 END;
 /
 
+-- Primer llamado de la funcion get_deptid_by_name, pasandole como parametro un dato valido debería retornar el id del departamento
 DECLARE
-	v_text = 
+	v_text VARCHAR2 := 'CONTABILIDAD';
+	v_id NUMBER := 0;
 BEGIN
-
+	v_id = get_deptid_by_name(v_text);
+	IF v_id <> -1 THEN
+	
+		DBMS_OUTPUT.PUT_LINE( 'El id del departamento con nombre ' || v_text || ' es ' || v_id );
+	ELSE
+		DBMS_OUTPUT.PUT_LINE( 'El id del departamento con nombre ' || v_text || ' no existe');
+		
 EXCEPTION
 	WHEN OTHERS THEN
 		DBMS_OUTPUT.PUT_LINE( SQLERRM );
 END;
+
+-- Segundo llamado de la funcion get_deptid_by_name,  pasandole como parametro un dato no valido.
+-- Debería retornar -1
+
+DECLARE
+	v_text VARCHAR2 := 'CONTABILIDAD_qwe';
+	v_id NUMBER := 0;
+BEGIN
+	v_id = get_deptid_by_name(v_text);
+	IF v_id <> -1 THEN
+	
+		DBMS_OUTPUT.PUT_LINE( 'El id del departamento con nombre ' || v_text || ' es ' || v_id );
+	ELSE
+		DBMS_OUTPUT.PUT_LINE( 'El id del departamento con nombre ' || v_text || ' no existe');
+		
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
+END;
+
+
