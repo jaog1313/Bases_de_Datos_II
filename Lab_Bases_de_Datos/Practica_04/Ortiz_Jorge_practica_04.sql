@@ -1,3 +1,5 @@
+/
+-- Funcion 01
 CREATE OR REPLACE FUNCTION get_deptno_by_name(
 	p_dname dept.dmane%TYPE
 )
@@ -9,6 +11,7 @@ BEGIN
 	INTO v_deptno
 	FROM dept
 	WHERE LOWER(dept.dname) = LOWER(p_dname);
+	RETURN v_deptno;
 EXCEPTION
 	WHEN NO_DATA_FOUND THEN
 		DBMS_OUTPUT.PUT_LINE('No se encontro el departamento con el nombre' || p_dname);
@@ -18,3 +21,12 @@ EXCEPTION
 		RETURN -1;
 END;
 /
+
+DECLARE
+	v_text = 
+BEGIN
+
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE( SQLERRM );
+END;
