@@ -14,6 +14,7 @@ is
 			exit when infoDept_cursor%NotFound;
 			dbms.output.put_line("Nombre departamento" || info
 */
+-- Mi version
 
 create or replace procedure procFiveSal
 is
